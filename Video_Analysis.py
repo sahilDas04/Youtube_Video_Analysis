@@ -46,22 +46,17 @@ def calculate_score(sentiment):
 def draw_gauge_chart(score):
     fig, ax = plt.subplots()
 
-    
     circle = plt.Circle((0.5, 0.5), 0.4, color='white', fill=True)
     ax.add_artist(circle)
 
-    
     wedge = Wedge((0.5, 0.5), 0.4, 0, score * 3.6, facecolor='green', edgecolor='gray', linewidth=2)
     ax.add_patch(wedge)
 
-    
     bg_wedge = Wedge((0.5, 0.5), 0.4, score * 3.6, 360, facecolor='lightgray', edgecolor='gray', linewidth=2)
     ax.add_patch(bg_wedge)
 
-    
     plt.text(0.5, 0.5, f'{score:.1f}%', horizontalalignment='center', verticalalignment='center', fontsize=20, color='black')
 
-    
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.set_aspect('equal')
@@ -76,6 +71,13 @@ def main():
 
     video_url = st.text_input("Enter YouTube Video URL: ")
 
+    if video_url:
+        video_id = extract_video_id(video_url)
+        if video_id:
+            st.video(f"https://www.youtube.com/watch?v={video_id}")
+        else:
+            st.error("Invalid YouTube URL")
+
     if st.button("Fetch and Analyze Comments"):
         if not api_key:
             st.error("Please enter a valid YouTube API key.")
@@ -83,11 +85,6 @@ def main():
 
         if not video_url:
             st.error("Please enter a valid YouTube video URL.")
-            return
-
-        video_id = extract_video_id(video_url)
-        if not video_id:
-            st.error("Invalid YouTube URL")
             return
 
         yt_client = get_yt_client(api_key)
